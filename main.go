@@ -1,12 +1,15 @@
 package main
 
 import (
+	"github.com/Ad3bay0c/go-auth/controllers"
+	"github.com/gorilla/pat"
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -28,6 +31,14 @@ func main() {
 
 	goth.UseProviders(
 		google.New(os.Getenv("SECRET_ID"), os.Getenv("SECRET_KEY"),
-			"http://localhost:3500/auth/google/callback", "email", "profile"),
+			"http://localhost:3500/auth/google/callback"),
 	)
+
+	router := pat.New()
+	router.Get("/auth/{provider}", controllers.BeginAuth)
+	router.Get("/", controllers.LoginPage)
+	router.Get("/auth/{provider}/callback", controllers.Callback)
+
+	log.Println("Server Started on localhost:3500")
+	log.Fatal(http.ListenAndServe(":3500", router))
 }

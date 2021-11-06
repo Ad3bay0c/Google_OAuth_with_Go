@@ -71,6 +71,23 @@ func saveToken(path string, token *oauth2.Token) {
 }
 
 func main() {
+	// maxAge := 86400 * 30 // 30 days
+	// isProd := false      // Set to true when serving over https
+
+	// store := sessions.NewCookieStore([]byte(os.Getenv("SECRET_KEY")))
+	// store.MaxAge(maxAge)
+	// store.Options.Path = "/"
+	// store.Options.HttpOnly = true // HttpOnly should always be enabled
+	// store.Options.Secure = isProd
+
+	// gothic.Store = store
+
+	// goth.UseProviders(
+	// 	google.New(os.Getenv("SECRET_ID"), os.Getenv("SECRET_KEY"),
+	// 		"http://localhost:3500/auth/google/callback"),
+	// )
+
+
 	ctx := context.Background()
 	b, err := ioutil.ReadFile("credentials.json")
 	if err != nil {

@@ -1,33 +1,42 @@
 package main
 
-func main() {
-	//if err := godotenv.Load(); err != nil {
-	//	log.Println(err.Error())
-	//}
-	//
-	//maxAge := 86400 * 30  // 30 days
-	//isProd := false       // Set to true when serving over https
-	//
-	//store := sessions.NewCookieStore([]byte(os.Getenv("SECRET_KEY")))
-	//store.MaxAge(maxAge)
-	//store.Options.Path = "/"
-	//store.Options.HttpOnly = true   // HttpOnly should always be enabled
-	//store.Options.Secure = isProd
-	//
-	//gothic.Store = store
-	//
-	//goth.UseProviders(
-	//	google.New(os.Getenv("SECRET_ID"), os.Getenv("SECRET_KEY"),
-	//		"http://localhost:3500/auth/google/callback"),
-	//)
-	//
-	//router := pat.New()
-	//router.Get("/auth/{provider}", controllers.BeginAuth)
-	//router.Get("/", controllers.LoginPage)
-	//router.Get("/auth/{provider}/callback", controllers.Callback)
-	//
-	//log.Println("Server Started on localhost:3500")
-	//log.Fatal(http.ListenAndServe(":3500", router))
+import (
+	"log"
+	"net/http"
 
+	"github.com/Ad3bay0c/go-auth/controllers"
+	"github.com/joho/godotenv"
+)
+
+func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println(err.Error())
+	}
+
+	// router := pat.New()
+	// router.Get("/api/auth/{provider}", controllers.Login)
+	// router.Get("/", controllers.LoginPage)
+	// router.Get("/auth/{provider}/callback", controllers.OAuthCallback)
+
+	// log.Println("Server Started on localhost:3500")
+
+	// // client := db.RedisConnect()
+
+	// // fmt.Println(client.Get("name"))
+	// log.Fatal(http.ListenAndServe(":3500", router))
+
+	mux := http.NewServeMux()
+	// Root
+
+	// OauthGoogle
+	mux.HandleFunc("/api/auth/google", controllers.Login)
+	mux.HandleFunc("/", controllers.LoginPage)
+	mux.HandleFunc("/auth/google/callback", controllers.OAuthCallback)
 	//
+	PORT := ":3500"
+	server := &http.Server{
+		Handler: mux,
+		Addr:    PORT,
+	}
+	server.ListenAndServe()
 }

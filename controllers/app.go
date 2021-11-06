@@ -4,11 +4,13 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"html/template"
+
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
 	"golang.org/x/oauth2"
-	"html/template"
-	"log"
+
+	// "log"
 	"net/http"
 	"os"
 	"time"
@@ -30,17 +32,19 @@ func Callback(rw http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(rw, "Error : %v", err.Error())
 		return
 	}
-	log.Println(user)
-	t, _ := template.ParseFiles("./templates/profile.gohtml")
-	t.Execute(rw, user)
+
+	fmt.Fprintf(rw, "Data %v", user)
+	// log.Println(user)
+	// t, _ := template.ParseFiles("./templates/profile.gohtml")
+	// t.Execute(rw, user)
 }
 
 var googleOAuthConfig = &oauth2.Config{
-	RedirectURL: "http://localhost:3500/auth/google/callback",
-	ClientID: os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
+	RedirectURL:  "http://localhost:3500/auth/google/callback",
+	ClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
 	ClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
-	Scopes: []string{"https://www.googleapis.com/auth/userinfo.email"},
-	Endpoint: google.Endpoint,
+	Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
+	Endpoint:     google.Endpoint,
 }
 
 func OAuthLogin(w http.ResponseWriter, req *http.Request) {
@@ -49,6 +53,7 @@ func OAuthLogin(w http.ResponseWriter, req *http.Request) {
 	u := googleOAuthConfig.AuthCodeURL(oauthState)
 	http.Redirect(w, req, u, http.StatusTemporaryRedirect)
 }
+
 func generateStateOauthCookie(w http.ResponseWriter) string {
 	var expiration = time.Now().Add(365 * 24 * time.Hour)
 
